@@ -1,0 +1,113 @@
+-- principal bdd
+-- create database android;
+-- create user 'android'@'%' identified by 'android';
+-- grant all privileges on android.* to 'android'@'%';
+use android;
+create Table tienda(
+    id_tienda int(12) unsigned AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(40),
+    pais varchar(30),
+    ciudad varchar(30),
+    localizacion varchar(30),
+    QR_tienda varchar(12)
+);
+create Table zonas(
+    id_zona int(12) unsigned AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(40),
+    localizacion varchar(30),
+    QR_zona varchar(12),
+    id_tienda int(12) references tienda(id_tienda)
+    on delete cascade
+    on update restrict
+);
+create Table pasillos(
+    id_pasillo int(12) unsigned AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(40),
+    localizacion varchar(30),
+    QR_pasillo varchar(12),
+    id_zona int(12) references zonas(id_zona)
+    on delete cascade
+    on update restrict
+);
+create Table estanterias(
+    id_estanteria int(12) unsigned AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(40),
+    localizacion varchar(30),
+    QR_estanteria varchar(12),
+    id_pasillo int(12) references pasillos(id_pasillo)
+    on delete cascade
+    on update restrict
+);
+create Table baldas(
+    id_balda int(12) unsigned AUTO_INCREMENT PRIMARY KEY,
+    localizacion varchar(30),
+    QR_balda varchar(12),
+    id_estanteria int(12) references estanterias(id_estanteria)
+    on delete cascade
+    on update restrict
+);
+create Table posiciones(
+    id_posicion int(16) unsigned AUTO_INCREMENT PRIMARY KEY,
+    localizacion varchar(30),
+    QR_posicion varchar(16),
+    id_balda int(12) references baldas(id_balda)
+    on delete cascade
+    on update restrict
+);
+
+create table articulos(
+    id_articulo int(16) unsigned auto_increment primary key,
+    cantidad int(16),
+    QR_articulo varchar(16),
+    precio int(6),
+    descripcion varchar(350),
+    categoria varchar(40)
+);
+
+create table localizar(
+    id_articulo int(16) references articulos(id_articulo),
+    id_posicion int(12) references posiciones(id_posicion),
+    primary key (id_articulo ,id_posicion)
+);
+--  destruir principal bdd
+/**
+drop table tienda;
+drop table zonas;
+drop table pasillos;
+drop table estanterias;
+drop table baldas;
+drop table posiciones;
+drop table articulos;
+drop table localizar;
+**/
+
+
+-- usuarios
+
+-- create database usuarios;
+create table usuarios(
+    id_usuario int(16) unsigned AUTO_INCREMENT PRIMARY KEY,
+    username varchar(16) unique ,
+    password varchar(20),
+    mode varchar(10)
+);
+
+-- destruir tabla
+-- drop table usuarios;
+
+select username, password from usuarios;
+
+select count(*) from usuarios
+where username='admin' AND password='admin';
+
+-- creacion de usuarios esenciales
+insert into usuarios(username,password,mode) values('admin','admin','admin');
+insert into usuarios(username,password,mode) values('user','user','user');
+-- devolver usuarios
+select * from usuarios;
+-- insertar tiendas
+insert into tienda(nombre, pais, ciudad, localizacion, QR_tienda) values('Don Bosco','España','Villamuriel','@41.9547206,-4.5187898,17z','1');
+insert into tienda(nombre, pais, ciudad, localizacion, QR_tienda) values('Mercadona','España','Palencia','@42.0158519,-4.5343352,15z','2');
+
+-- devolver tiendas
+select * from tienda;
